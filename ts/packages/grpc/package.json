@@ -1,0 +1,61 @@
+{
+  "name": "@composio/grpc",
+  "version": "0.1.0",
+  "description": "Expose a Composio session to QENEX agents over the GrokToolsService gRPC API",
+  "main": "src/index.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ComposioHQ/composio.git",
+    "directory": "ts/packages/grpc"
+  },
+  "bugs": {
+    "url": "https://github.com/ComposioHQ/composio/issues"
+  },
+  "homepage": "https://github.com/ComposioHQ/composio/tree/next/ts/packages/grpc#readme",
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.mjs",
+    "types": "dist/index.d.mts"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "README.md",
+    "dist",
+    "proto"
+  ],
+  "scripts": {
+    "clean": "git clean -xdf node_modules",
+    "build": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "keywords": [
+    "composio",
+    "grpc",
+    "qenex",
+    "agents",
+    "tools"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.3",
+    "@grpc/proto-loader": "^0.8.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

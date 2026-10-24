@@ -8,7 +8,7 @@ TypeScript workspace guidance for AI agents.
 
 ## Skill Routing
 
-- Use `typescript-sdk` for `@composio/core`, shared TypeScript package behavior, generated SDK surfaces, and modifiers.
+- Use `typescript-sdk` for `@composio/core`, `@composio/grpc`, shared TypeScript package behavior, generated SDK surfaces, and modifiers.
 - Use `typescript-providers` for packages under `ts/packages/providers/`.
 - Use `typescript-testing` for Vitest, typecheck, package builds, examples, or runtime E2E test selection.
 - Use `cli-command` or `cli-e2e` for `ts/packages/cli/` and `ts/e2e-tests/cli/`.

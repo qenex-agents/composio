@@ -9,6 +9,7 @@ packages:
   - ts/packages/cli-keyring
   - ts/packages/core
   - ts/packages/experimental
+  - ts/packages/grpc
   - ts/packages/json-schema-to-effect-schema
   - ts/packages/json-schema-to-zod
   - ts/packages/slim
@@ -95,12 +96,17 @@ minimumReleaseAgeExclude:
   # scripts were checked by hand for this exact version only, so later releases
   # still wait out the cooldown. Remove once 0.6.0 is older than the cutoff.
   - '@typesafe-ai/sdk@0.6.0'
+  # temporary: GHSA-27r3-jxmh-p828. body-parser 2.4.0 (2026-10-22) is the
+  # patched 2.x release. It is published by expressjs through GitHub Actions
+  # trusted publishing, the tarball carries SLSA provenance, and it has no
+  # install scripts. Remove after 2026-10-25, once it is older than the cutoff.
+  - body-parser@2.4.0
 
 peerDependencyRules:
   allowedVersions:
     typescript: '^6.0.0 || ^7.0.0'
     # openai >=7.4 declares an optional `undici` peer of '>=5 <9'. The
-    # `undici@>=5.0.0 <6.28.0` override below narrows that range to '<7', which
+    # `undici@>=5.0.0 <6.29.1` override below narrows that range to '<7', which
     # @composio/core's own `undici@^7` dependency then reports as unmet. The
     # 7.x line is what openai actually supports; core is pinned to it on purpose
     # (see pinnedDispatcher.node.ts -- Node's fetch rejects undici 8 dispatchers).
@@ -120,10 +126,10 @@ overrides:
   # vulnerable 4.2.0; GHSA-2883-xcg3-v3hh raised the patched floor to 4.3.2.
   # Drop when it ships >=4.3.2.
   'js-yaml@>=4.0.0 <4.3.2': '>=4.3.2 <5'
-  # temporary: @ai-sdk/provider-utils@4 exact-pins vulnerable undici 5.x;
-  # GHSA-rfgv-xxqx-mfg5 raised the patched floor to 6.28.1. Drop when it ships
-  # >=6.28.1.
-  'undici@>=5.0.0 <6.28.1': '>=6.28.1 <7'
+  # temporary: @ai-sdk/provider-utils@4 exact-pins vulnerable undici 5.x.
+  # GHSA-rfgv-xxqx-mfg5 raised the patched floor to 6.28.1, and
+  # GHSA-xjj6-f33q-929c raised it to 6.29.1. Drop when it ships >=6.29.1.
+  'undici@>=5.0.0 <6.29.1': '>=6.29.1 <7'
   # temporary: gray-matter (via @mastra/core) exact-pins vulnerable js-yaml 3.15.0;
   # GHSA-2883-xcg3-v3hh raised the patched floor to 3.15.2. Drop when it ships
   # >=3.15.2.
@@ -160,9 +166,19 @@ overrides:
   '@modelcontextprotocol/core@>=2.0.0 <2.3.1': 2.3.1
   '@modelcontextprotocol/server@>=2.0.0 <2.3.1': 2.3.1
   '@modelcontextprotocol/server-legacy@>=2.0.0 <2.3.1': 2.3.1
-  # temporary: GHSA-4cwx-7wf7-3272; @ai-sdk/provider-utils accepts the patched
-  # 7.x line. Drop when its lockfile resolution is >=7.29.0 without an override.
-  'undici@>=7.0.0 <7.29.0': '>=7.29.0 <8'
+  # temporary: GHSA-4cwx-7wf7-3272, then GHSA-xjj6-f33q-929c raised the
+  # patched floor to 7.30.1. @ai-sdk/provider-utils accepts the patched 7.x
+  # line. Drop when its lockfile resolution is >=7.30.1 without an override.
+  'undici@>=7.0.0 <7.30.1': '>=7.30.1 <8'
+  # temporary: GHSA-mrhx-c7xc-m3w5. The production tree resolves zod
+  # 4.5.4 through the catalog (^4.5.4), @ai-sdk/*, and the e2e fixtures.
+  # The patched code is zod 4.6.6. The selector starts at 4.5.4 so the
+  # zod-floor alias (npm:zod@4.1.13) and wrangler's zod 4.4.3 stay put.
+  # Drop when no production install resolves below 4.6.6.
+  'zod@>=4.5.4 <4.6.6': '>=4.6.6 <5'
+  # temporary: GHSA-27r3-jxmh-p828. express 5.3.0 pins body-parser 2.3.0.
+  # Drop when its lockfile resolution is >=2.4.0 without an override.
+  'body-parser@>=2.0.0 <2.4.0': '>=2.4.0 <3'
   # temporary: GHSA-mh99-v99m-4gvg requires the 5.x line for older majors, and
   # GHSA-rgw5-rvv9-x895, GHSA-6j4f-fj2g-mc7p, and GHSA-qhr7-859c-m2p7 raise
   # its patched floor to 5.0.11. This selector spans majors deliberately --
@@ -206,3 +222,13 @@ auditConfig:
     # private examples and e2e fixtures. Drop once @mastra/core can move past
     # the 3.x provider-utils line.
     - GHSA-866g-f22w-33x8
+    # Zod array-size memory use (high). The patch is v4-only
+    # (packages/zod/src/v4, zod 4.6.6) and the override above moves every
+    # production zod 4.5.4 install onto it. The advisory range is `<4.6.6`,
+    # so it also matches zod 3.25.76. Nothing in the 3.x line is patched.
+    # Those installs are the zod 3 compatibility fixtures and
+    # @mastra/schema-compat's zod-from-json-schema@0.0.5 converter, which
+    # link the zod 3 API. Drop this ignore when those dependencies leave
+    # the 3.x line, and keep the zod override until then. Removing the
+    # override alone would put vulnerable zod 4 back without a failing audit.
+    - GHSA-mrhx-c7xc-m3w5

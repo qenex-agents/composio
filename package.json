@@ -8,6 +8,7 @@
   "workspaces": [
     "ts/packages/core",
     "ts/packages/experimental",
+    "ts/packages/grpc",
     "ts/packages/slim",
     "ts/packages/json-schema-to-effect-schema",
     "ts/packages/json-schema-to-zod",
