@@ -46,6 +46,7 @@ Use the smallest relevant skill:
 ```text
 ts/                         TypeScript SDK workspace
   packages/core/            @composio/core
+  packages/grpc/            @composio/grpc — GrokToolsService for QENEX agents
   packages/providers/       TypeScript provider adapters
   packages/cli/             Effect-based CLI
   e2e-tests/                Docker runtime and CLI E2E tests

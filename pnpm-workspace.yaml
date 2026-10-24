@@ -9,6 +9,7 @@ packages:
   - ts/packages/cli-keyring
   - ts/packages/core
   - ts/packages/experimental
+  - ts/packages/grpc
   - ts/packages/json-schema-to-effect-schema
   - ts/packages/json-schema-to-zod
   - ts/packages/slim
